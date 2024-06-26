@@ -28,6 +28,13 @@ import com.github.tomakehurst.wiremock.testsupport.MappingJsonSamples;
 import com.github.tomakehurst.wiremock.testsupport.WireMockResponse;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 public class MappingsAcceptanceTest extends AcceptanceTestBase {
 
@@ -238,6 +245,27 @@ public class MappingsAcceptanceTest extends AcceptanceTestBase {
         "expected Transfer-Encoding head to be absent");
   }
 
+  @Test
+  @Timeout(10)
+  public void mappingShouldResponseBeforeTimeoutBigJsonWithCommonKeys() {
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_1);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_2);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_3);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_4);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_5);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_6);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_7);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_8);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_9);
+    testClient.addResponse(MappingJsonSamples.MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_10);
+
+    var body = readFileContent("/test-requests/big-json-with-common-keys.json");
+    WireMockResponse bigJsonWithCommonKeys =
+            testClient.postJson("/body/big-json-common-keys", body);
+
+    assertThat(bigJsonWithCommonKeys.statusCode(), is(202));
+  }
+
   private void getResponseAndAssert200Status(String url) {
     WireMockResponse response = testClient.get(url);
     assertThat(response.statusCode(), is(200));
@@ -250,5 +278,15 @@ public class MappingsAcceptanceTest extends AcceptanceTestBase {
 
   private void add200ResponseFor(String url) {
     testClient.addResponse(String.format(MappingJsonSamples.STATUS_ONLY_GET_MAPPING_TEMPLATE, url));
+  }
+
+  private static String readFileContent(String pathString) {
+    try {
+      var resource = Objects.requireNonNull(MappingsAcceptanceTest.class.getResource(pathString));
+      var resourcePath = Paths.get(resource.toURI());
+      return Files.readString(resourcePath);
+    } catch (IOException | URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

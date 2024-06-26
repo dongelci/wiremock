@@ -15,6 +15,12 @@
  */
 package com.github.tomakehurst.wiremock.testsupport;
 
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 import static com.github.tomakehurst.wiremock.common.Encoding.encodeBase64;
 
 public class MappingJsonSamples {
@@ -274,4 +280,24 @@ public class MappingJsonSamples {
 
   public static final String MAPPING_REQUEST_JSON_BODY_DECIMALS_TRAILING_ZEROS =
       MAPPING_REQUEST_JSON_BODY_DECIMALS_NO_TRAILING_ZEROS.replace("1.2", "1.20000000");
+
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_1 = readFileContent("/equals-to-json/big-json-with-common-keys-1.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_2 = readFileContent("/equals-to-json/big-json-with-common-keys-2.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_3 = readFileContent("/equals-to-json/big-json-with-common-keys-3.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_4 = readFileContent("/equals-to-json/big-json-with-common-keys-4.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_5 = readFileContent("/equals-to-json/big-json-with-common-keys-5.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_6 = readFileContent("/equals-to-json/big-json-with-common-keys-6.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_7 = readFileContent("/equals-to-json/big-json-with-common-keys-7.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_8 = readFileContent("/equals-to-json/big-json-with-common-keys-8.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_9 = readFileContent("/equals-to-json/big-json-with-common-keys-9.json");
+  public static final String MAPPING_REQUEST_BIG_JSON_BODY_WITH_COMMON_KEYS_10 = readFileContent("/equals-to-json/big-json-with-common-keys-10.json");
+
+  private static String readFileContent(String pathString) {
+      try {
+          var resourceStream = Objects.requireNonNull(MappingJsonSamples.class.getResourceAsStream(pathString));
+          return IOUtils.toString(Objects.requireNonNull(resourceStream), StandardCharsets.UTF_8);
+      } catch (IOException e) {
+          throw new RuntimeException(e);
+      }
+  }
 }
